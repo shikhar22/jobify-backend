@@ -52,10 +52,6 @@ exports.updateJob = catchAsyncErrors(async (req, res, next) => {
 
     if (!job) {
         return next(new ErrorHandler('Job not found', 404));
-        // return res.status(404).json({
-        //     success: false,
-        //     message: 'Job not found'
-        // });
     }
 
     // Check if the user is owner
@@ -80,11 +76,7 @@ exports.deleteJob = catchAsyncErrors(async (req, res, next) => {
     let job = await Job.findById(req.params.id).select('+applicantsApplied');
 
     if (!job) {
-        // return next(new ErrorHandler('Job not found', 404));
-        return res.status(404).json({
-            success: false,
-            message: 'Job not found'
-        });
+        return next(new ErrorHandler('Job not found', 404));
     }
 
     // Check if the user is owner
@@ -130,11 +122,7 @@ exports.jobStats = catchAsyncErrors(async (req, res, next) => {
     ]);
 
     if (stats.length === 0) {
-        // return next(new ErrorHandler(`No stats found for - ${req.params.topic}`, 200));
-        return res.status(404).json({
-            success: false,
-            message: 'Job not found'
-        });
+        return next(new ErrorHandler(`No stats found for - ${req.params.topic}`, 200));
     }
 
     res.status(200).json({
