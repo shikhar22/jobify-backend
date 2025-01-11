@@ -3,6 +3,7 @@ const app = express();
 const dotenv = require('dotenv');
 const connectDatabase = require('./config/database');
 const ErrorHandler = require('./utils/errorHandler');
+const cookieParser = require('cookie-parser');
 
 dotenv.config({ path: './config/config.env' })
 
@@ -17,6 +18,9 @@ connectDatabase();
 
 // Setup body parser
 app.use(express.json());
+
+// Set cookie parser
+app.use(cookieParser());
 
 //Creating a middleware
 
@@ -33,8 +37,10 @@ const middleware = (req, res, next) => {
 app.use(middleware);
 
 const jobs = require('./routes/jobs');
+const auth = require('./routes/auth');
 
 app.use('/api/v1', jobs);
+app.use('/api/v1', auth);
 
 app.all('*', (req, res, next) => {
     next(new ErrorHandler(`${req.originalUrl} route not found`, 404));
