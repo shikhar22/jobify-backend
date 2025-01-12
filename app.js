@@ -12,6 +12,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
+const bodyParser = require('body-parser');
 
 dotenv.config({ path: './config/config.env' })
 
@@ -23,6 +24,10 @@ process.on('uncaughtException', err => {
 });
 
 connectDatabase();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(express.static('public'));
 
 // Setup security headers
 app.use(helmet());
