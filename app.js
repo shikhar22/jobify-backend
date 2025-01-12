@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const connectDatabase = require('./config/database');
 const ErrorHandler = require('./utils/errorHandler');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const xssClean = require('xss-clean');
 const fileUpload = require('express-fileupload');
@@ -49,6 +50,9 @@ const limiter = rateLimit({
     windwosMs: 10 * 60 * 1000,
     max: 100
 })
+
+// Setup cors - Accessible by other domains
+app.use(cors());
 
 app.use(limiter);
 
