@@ -4,9 +4,12 @@ const dotenv = require('dotenv');
 const connectDatabase = require('./config/database');
 const ErrorHandler = require('./utils/errorHandler');
 const cookieParser = require('cookie-parser');
+
+const xssClean = require('xss-clean');
 const fileUpload = require('express-fileupload');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 
 dotenv.config({ path: './config/config.env' })
 
@@ -19,6 +22,9 @@ process.on('uncaughtException', err => {
 
 connectDatabase();
 
+// Setup security headers
+app.use(helmet());
+
 // Setup body parser
 app.use(express.json());
 
@@ -28,8 +34,11 @@ app.use(cookieParser());
 // Handling File upload
 app.use(fileUpload());
 
-// Setup security headers
-app.use(helmet);
+// Sanitize data
+app.use(mongoSanitize());
+
+// Xss Clean - to not allow scripts (<script></script>) in req body so prevents adding scripts in db
+app.use(xssClean());
 
 //Rate Limiting
 const limiter = rateLimit({
