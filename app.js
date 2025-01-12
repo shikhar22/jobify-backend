@@ -4,6 +4,8 @@ const dotenv = require('dotenv');
 const connectDatabase = require('./config/database');
 const ErrorHandler = require('./utils/errorHandler');
 const cookieParser = require('cookie-parser');
+const fileUpload = require('express-fileupload');
+const rateLimit = require('express-rate-limit');
 
 dotenv.config({ path: './config/config.env' })
 
@@ -22,8 +24,18 @@ app.use(express.json());
 // Set cookie parser
 app.use(cookieParser());
 
-//Creating a middleware
+// Handling File upload
+app.use(fileUpload());
 
+//Rate Limiting
+const limiter = rateLimit({
+    windwosMs: 10 * 60 * 1000,
+    max: 100
+})
+
+app.use(limiter);
+
+//Creating a middleware
 const errorMiddleware = require('./middlewares/errors');
 
 const middleware = (req, res, next) => {
@@ -38,9 +50,11 @@ app.use(middleware);
 
 const jobs = require('./routes/jobs');
 const auth = require('./routes/auth');
+const user = require('./routes/user');
 
 app.use('/api/v1', jobs);
 app.use('/api/v1', auth);
+app.use('/api/v1', user);
 
 app.all('*', (req, res, next) => {
     next(new ErrorHandler(`${req.originalUrl} route not found`, 404));
