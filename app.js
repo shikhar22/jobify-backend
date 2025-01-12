@@ -10,6 +10,7 @@ const fileUpload = require('express-fileupload');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
+const hpp = require('hpp');
 
 dotenv.config({ path: './config/config.env' })
 
@@ -39,6 +40,9 @@ app.use(mongoSanitize());
 
 // Xss Clean - to not allow scripts (<script></script>) in req body so prevents adding scripts in db
 app.use(xssClean());
+
+// Prevent Parameter Pollution
+app.use(hpp());
 
 //Rate Limiting
 const limiter = rateLimit({
